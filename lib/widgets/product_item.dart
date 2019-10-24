@@ -33,7 +33,17 @@ class ProductItem extends StatelessWidget {
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
               ),
               onPressed: () {
-                product.toggleFavoriteStatus();
+                product.toggleFavoriteStatus().catchError((error) {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      duration: Duration(seconds: 2),
+                      content: Text(
+                        error.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                });
               },
               color: Theme.of(context).accentColor,
             ),
@@ -50,6 +60,21 @@ class ProductItem extends StatelessWidget {
                 title: product.title,
                 price: product.price,
               );
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  'Added item to your cart!',
+                ),
+                duration: Duration(
+                  seconds: 2,
+                ),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () {
+                    cart.removeSingleItem(product.id);
+                  },
+                ),
+              ));
             },
             color: Theme.of(context).accentColor,
           ),
